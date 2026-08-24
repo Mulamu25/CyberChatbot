@@ -1,10 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Media;
+
 
 namespace CyberChatbot
 {
-    internal class AudioPlayer
+    public class AudioPlayer
     {
+        public void PlayWelcomeMessage()
+        {
+            try
+            {
+                SoundPlayer play= new SoundPlayer("CyberGreeting.wav");
+                play.Play();
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error playing audio: {ex.Message}" );
+            }
+        }
     }
 }
