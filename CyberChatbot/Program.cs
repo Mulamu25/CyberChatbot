@@ -34,12 +34,12 @@ namespace CyberChatbot
 
             ResponseHandler handler = new ResponseHandler();
             
-            Console.Write($"Please enter your name: {handler.Name}");
+            Console.Write($"Please enter your name: ");
             handler.Name = Console.ReadLine();
 
 
-            Console.WriteLine($"\nWelcome, {handler.Name}! You are now connected to the CyberChatbot System.");
-            Console.WriteLine("Press any key to exit...");
+            //Console.WriteLine($"\nWelcome, {handler.Name}! You are now connected to the CyberChatbot System.");
+            //Console.WriteLine("Press any key to exit...");
 
 
             //Name validation process
@@ -59,6 +59,50 @@ namespace CyberChatbot
             Console.ResetColor();
             Console.WriteLine("==================================================================================");
             Console.ReadLine();
+
+
+            string question;
+            do
+            {
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.WriteLine("Ask a question or type 'exit': What can I ask you about?");
+                Console.ResetColor();
+
+                question = Console.ReadLine().ToLower().Trim();
+
+
+                if (question == "exit")
+                {
+                    Console.ForegroundColor = ConsoleColor.Magenta;
+                    Console.WriteLine("Goodbye! Stay safe online");
+                    Console.ResetColor();
+                    break;
+                }
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.Write("\nAssistant: ");
+                handler.GetResponse(question);
+                Console.ResetColor();
+
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("==================================================================================");
+                Console.ResetColor();
+
+            } while (question != "exit");
+
+
+            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine($"Thank you for chatting with me, {handler.Name}!");
+            Console.WriteLine("Remember: Stay safe, stay secure, and always be cautious online!");
+            Console.WriteLine("Goodbye!");
+            Console.ResetColor();
+
+            Console.WriteLine("==================================================================================");
+
+            Console.Write("\nPress any key to exit...");
+
+
             Console.ReadKey();
 
 

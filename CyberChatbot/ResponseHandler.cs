@@ -50,7 +50,7 @@ namespace CyberChatbot
                 }
                 else
                 {
-                    Console.WriteLine("I didnt quite understand that. Could you rephrase");
+                    Console.WriteLine("I didnt quite understand that. Could you  rephrase");
                 }
 
             } while (question != "exit");
