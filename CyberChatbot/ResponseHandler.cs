@@ -11,39 +11,49 @@ namespace CyberChatbot
             get; set;
         }
 
-        public string GetResponse(string input)
+        public void GetResponse(string input)
         {
-            if (input.Contains("how are you") || input.Contains("how are u"))
+            string question;
+            do
             {
-                return $"I'm doing great, {Name}! Thanks for asking!";
+                Console.WriteLine("Ask a question or type éxit': What can i ask you about");
+                question = Console.ReadLine().ToLower().Trim();
+                Console.WriteLine("\nAssistant: ");
 
-            }
-            else if (input.Contains("purpose"))
-            {
-                return $"I'm your Cybersecurity Awareness Assistant, {Name}! I'm here to educate you about online safety, phishing scams, password security, and safe browsing habits";
+                if (question == "exit")
+                {
+                    Console.WriteLine("Goodbye! Stay safe online");
+                }
+                else if (question.Contains("how are you"))
+                {
+                    Console.WriteLine("I am doing well and ready to help you.");
+                }
+                else if (question.Contains("purpose"))
+                {
+                    Console.WriteLine("The purpose is to assist you with cyber safety information and guidance.");
+                }
+                else if (question.Contains("What can i ask") || question.Contains("topic"))
+                {
+                    Console.WriteLine("You can ask about passwords, phishing and safe browsing.");
+                }
+                else if (question.Contains("passwords"))
+                {
+                    Console.WriteLine("Use strong, unique passwords for each account and consider using a password manager.");
+                }
+                else if (question.Contains("phishing"))
+                {
+                    Console.WriteLine("Be cautious of suspicious emails or messages asking for personal information. Verify the source before clicking any links.");
+                }
+                else if (question.Contains("safe browsing"))
+                {
+                    Console.WriteLine("Use secure websites (https), avoid clicking on unknown links, and keep your browser updated.");
+                }
+                else
+                {
+                    Console.WriteLine("I didnt quite understand that. Could you rephrase");
+                }
 
-            }
-            else if (input.Contains("what can i ask") || input.Contains("what can i ask you"))
-            {
-                return $"Great question, {Name}! You can ask me about:\n Password safety\n Phishing scams\n Safe browsing\n Social engineering";
-
-
-            }
-            else if (input.Contains("help"))
-            {
-                return $"Here's what I can help with, {Name}:\n Password safety tips\n How to spot phishing emails\n Safe browsing practices\n Recognizing social engineering\n\n Type éxit to end our chat.";
-
-            }
-            else if (input.Contains("password"))
-            {
-                return $"Password safety is crucial, {Name}! Here are some tips:\n Use strong, unique passwords for each account\n Enable two-factor authentication\n Avoid using easily guessable information\n Consider using a password manager";
-
-            }
-            else
-            {
-                return $"i didn't quite understand that, {Name}. Could you rephrase?\n\nYou can ask me about:\n Passwords\n Phishing\n Safe Browsing\n Social Engineering\n\nType 'help'for more options!";
-            }
-
+            } while (question != "exit");
         }
     }
 }
