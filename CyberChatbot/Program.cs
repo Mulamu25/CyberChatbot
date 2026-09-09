@@ -11,7 +11,7 @@ namespace CyberChatbot
             audio.PlayWelcomeMessage();
 
 
-            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
            
             Console.WriteLine(@"  
   ============================================================================================================================================================                                                                                                                                                                       
@@ -31,7 +31,7 @@ namespace CyberChatbot
             Console.WriteLine("      WELCOME TO THE CYBERCHATBOT SYSTEM");
             Console.WriteLine("===================================================================");
 
-            //Test connection to github ggghuytvhuy
+            
 
             ResponseHandler handler = new ResponseHandler();
             
@@ -39,14 +39,10 @@ namespace CyberChatbot
             handler.Name = Console.ReadLine();
 
 
-            //Console.WriteLine($"\nWelcome, {handler.Name}! You are now connected to the CyberChatbot System.");
-            //Console.WriteLine("Press any key to exit...");
-
-
             //Name validation process
             while (string.IsNullOrWhiteSpace(handler.Name))
             {
-                Console.ForegroundColor =  ConsoleColor.Cyan;
+                Console.ForegroundColor =  ConsoleColor.DarkMagenta;
                 Console.WriteLine("Name cannot be empty!");
                 Console.ResetColor();
 
@@ -55,7 +51,7 @@ namespace CyberChatbot
 
             }
             //Personalized welcome message
-            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.WriteLine($"\nWelcome, {handler.Name}! You are now connected to the CyberChatbot System.");
             Console.ResetColor();
             Console.WriteLine("==================================================================================");
@@ -98,7 +94,7 @@ namespace CyberChatbot
                 Console.ResetColor();
 
 
-                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
                 Console.WriteLine("==================================================================================");
                 Console.ResetColor();
 
@@ -106,7 +102,7 @@ namespace CyberChatbot
 
 
             Console.WriteLine();
-            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.WriteLine($"Thank you for chatting with me, {handler.Name}!");
             Console.WriteLine("Remember: Stay safe, stay secure, and always be cautious online!");
             Console.WriteLine("Goodbye!");
