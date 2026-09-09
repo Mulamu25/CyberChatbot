@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+
 
 namespace CyberChatbot
 {
@@ -13,12 +12,9 @@ namespace CyberChatbot
 
         public void GetResponse(string input)
         {
-            string question;
-            do
-            {
-                Console.WriteLine("Ask a question or type éxit': What can i ask you about");
-                question = Console.ReadLine().ToLower().Trim();
-                Console.WriteLine("\nAssistant: ");
+            
+                 string question = input.ToLower().Trim();
+               
 
                 if (question == "exit")
                 {
@@ -26,7 +22,7 @@ namespace CyberChatbot
                 }
                 else if (question.Contains("how are you"))
                 {
-                    Console.WriteLine("I am doing well and ready to help you.");
+                    Console.WriteLine($"I am doing well and ready to help you, {Name}!.");
                 }
                 else if (question.Contains("purpose"))
                 {
@@ -53,8 +49,8 @@ namespace CyberChatbot
                     Console.WriteLine("I didnt quite understand that. Could you  rephrase");
                 }
 
-            } while (question != "exit");
+            } 
         }
     }
-}
+
 

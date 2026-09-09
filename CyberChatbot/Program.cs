@@ -31,6 +31,7 @@ namespace CyberChatbot
             Console.WriteLine("      WELCOME TO THE CYBERCHATBOT SYSTEM");
             Console.WriteLine("===================================================================");
 
+            //Test connection to github ggghuytvhuy
 
             ResponseHandler handler = new ResponseHandler();
             
@@ -58,14 +59,14 @@ namespace CyberChatbot
             Console.WriteLine($"\nWelcome, {handler.Name}! You are now connected to the CyberChatbot System.");
             Console.ResetColor();
             Console.WriteLine("==================================================================================");
-            Console.ReadLine();
+            
 
 
             string question;
             do
             {
                 Console.ForegroundColor = ConsoleColor.Magenta;
-                Console.WriteLine("Ask a question or type 'exit': What can I ask you about?");
+                Console.WriteLine("\nAsk a question or type 'exit': What can I ask you about?");
                 Console.ResetColor();
 
                 question = Console.ReadLine().ToLower().Trim();
@@ -80,7 +81,20 @@ namespace CyberChatbot
                 }
                 Console.ForegroundColor = ConsoleColor.Magenta;
                 Console.Write("\nAssistant: ");
+
+                //Typing Effect
+                var writer = new System.IO.StringWriter();
+                var original = Console.Out;
+                Console.SetOut(writer);
                 handler.GetResponse(question);
+                Console.SetOut(original);
+                string text = writer.ToString();
+
+                foreach (char c in text)
+                {
+                    Console.Write(c);
+                    System.Threading.Thread.Sleep(20); // Adjust the delay as needed
+                }
                 Console.ResetColor();
 
 
