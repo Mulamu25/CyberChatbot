@@ -1,14 +1,12 @@
 # CyberChatbot - Cybersecurity Awareness Bot
 
 ## Description
-A commandline chatbot educates South African citizens about cybersecurity awareness.
+A command-line chatbot educates South African citizens about cybersecurity awareness.
 This is Part 1 of a 3-part Portfolio of Evidence (POE).
-
-
 ### Features
 -Voice greeting on launch
 -ASCII art logo display
--Personalized conversations using the user's name(but not all the time)
+-Personalized conversations using the user's name
 -Cybersecurity topics: Purpose, Phishing, Safe browsing and Passwords
 -Input validation 
 -Colored console UI with borders
@@ -16,13 +14,18 @@ This is Part 1 of a 3-part Portfolio of Evidence (POE).
 
 ## How to Run
 1. Clone the repository to your local machine.
-2.Open in Visual Studio 
-3.Press F5 to run
+2. Open in Visual Studio 
+3. Press F5 to run
 
 ## Importtant: ASCII Art Display
 If the ASCII art logo is not fully visible or appears cut off:
 -Zoom in on your console window (press CTRL + Mouse scroll up)
 -Or maximize the console window
+
+## Setup Requirements
+- .NET 10.0 SDK or later
+- Windows OS (for audio playback)
+- Visual Studio 2022 or later
 
 ## CI Status 
 ![CI Workflow](screenshot/ci-pass.png)
@@ -37,7 +40,7 @@ GitHub Actions CI workflow passes successfully
 ## Author
 Mulamuleli Mungadi
 st10498756
-##Youtube link
+## Youtube link
 https://youtu.be/ODw7zlAAfA0
 ## References 
 
