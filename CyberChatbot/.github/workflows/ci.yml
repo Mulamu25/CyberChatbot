@@ -23,4 +23,4 @@ jobs:
       run: dotnet restore CyberChatbot.sln
 
     - name: Build project
-      run: dotnet build CyberChatbot.sln --no-restore --configuration Release
+      run: dotnet build CyberChatbot.sln --no-restore --configuration Release 
