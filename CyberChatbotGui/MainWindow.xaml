@@ -5,8 +5,119 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CyberChatbotGui"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-
-    </Grid>
+        Title="CyberChatbot - Cybersecurity Awareness Bot"
+        Height="750" Width="1050"
+        Background="#1E1E2E"
+        WindowStartupLocation="CenterScreen"
+        Loaded="Window_Loaded">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        
+        <!-- ====================HEADER==================== -->
+        <Border Grid.Row="0"
+                Background="#2A2A3E"
+                CornerRadius="10"
+                Padding="15"
+                Margin="0, 0, 0, 10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <!-- Title and Subtitle -->
+                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <TextBlock Text=" CYBERSECURITY AWARENESS BOT"
+                               FontSize="24"
+                               FontWeight="Bold"
+                               Foreground="#00D9FF"
+                               HorizontalAlignment="Center"/>
+                    <TextBlock Text="Stay Safe. Stay Secure. Stay Smart."
+                               FontSize="14"
+                               Foreground="#A0A0B0"
+                               HorizontalAlignment="Center"
+                               Margin="0, 5, 0, 0"/>
+                    
+                </StackPanel>
+                
+                <!-- Voice Greeting Button -->
+                <Button Grid.Column="1"
+                        x:Name="VoiceButton"
+                        Content=" Greeting"
+                        Width="130"
+                        Height="45"
+                        Background="#00D9FF"
+                        Foreground="#1E1E2E"
+                        FontSize="14"
+                        FontWeight="Bold"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        VerticalAlignment="Center"
+                        Click="VoiceButton_Click"/>
+                
+            </Grid>
+        </Border>
+        
+        <!-- =================== CHAT AREA ==============-->
+        <Border Grid.Row="1"
+                Background="#2A2A3E"
+                CornerRadius="10"
+                Padding="15"
+                Margin="0, 0, 0, 10">
+                    <ScrollViewer x:Name="ChatScrollViewer"
+                                  VerticalScrollBarVisibility="Auto">
+                        <StackPanel x:Name="ChatStackPanel"/>
+                        
+                    </ScrollViewer>
+             </Border>
+             
+        
+        <!-- ========================= INPUT AREA ================== -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- Text Input Box -->
+            <Border Grid.Column="0"
+                    Background="#2A2A3E"
+                    CornerRadius="10"
+                    Padding="5"
+                    Margin="0, 0, 10, 0">
+                <TextBox x:Name="UserInputTextBox"
+                         FontSize="16"
+                         Background="Transparent"
+                         Foreground="White"
+                         BorderThickness="0"
+                         Padding="10"
+                         VerticalContentAlignment="Center"
+                         KeyDown="UserInputTextBox_KeyDown"/>
+            </Border>
+            
+            <!-- Send Button -->
+            <Button Grid.Column="1"
+                    x:Name="SendButton"
+                    Content="SEND"
+                    Width="120"
+                    Height="45"
+                    Background="#00D9FF"
+                    Foreground="#1E1E2E"
+                    FontSize="16"
+                    FontWeight="Bold"
+                    BorderThickness="0"
+                    Cursor="Hand"
+                    Click="SendButton_Click"/>
+            
+        </Grid>
+        
+        
+        
+      </Grid>
 </Window>
+        
