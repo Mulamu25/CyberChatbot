@@ -1,24 +1,111 @@
-﻿using System.Text;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace CyberChatbotGui
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
+        private AudioPlayer _audioPlayer = new AudioPlayer();
+        private string _userName = "";
+
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Play voice greeting
+            _audioPlayer.PlayGreeting();
+
+            // Set ASCII art in the header
+            AsciiArtTextBlock.Text = @"
+ ██████╗██╗   ██╗██████╗ ███████╗██████╗ ███████╗███████╗ ██████╗██╗   ██╗██████╗ ██╗████████╗██╗   ██╗
+██╔════╝╚██╗ ██╔╝██╔══██╗██╔════╝██╔══██╗██╔════╝██╔════╝██╔════╝╚██╗ ██╔╝██╔══██╗██║╚══██╔══╝╚██╗ ██╔╝
+██║      ╚████╔╝ ██████╔╝█████╗  ██████╔╝███████╗█████╗  ██║      ╚████╔╝ ██████╔╝██║   ██║    ╚████╔╝ 
+██║       ╚██╔╝  ██╔══██╗██╔══╝  ██╔══██╗╚════██║██╔══╝  ██║       ╚██╔╝  ██╔══██╗██║   ██║     ╚██╔╝  
+╚██████╗   ██║   ██████╔╝███████╗██║  ██║███████║███████╗╚██████╗   ██║   ██║  ██║██║   ██║      ██║   
+ ╚═════╝   ╚═╝   ╚═════╝ ╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝ ╚═════╝   ╚═╝   ╚═╝  ╚═╝╚═╝   ╚═╝      ╚═╝   
+
+ █████╗ ██╗    ██╗ █████╗ ██████╗ ███████╗███╗   ██╗███████╗███████╗███████╗
+██╔══██╗██║    ██║██╔══██╗██╔══██╗██╔════╝████╗  ██║██╔════╝██╔════╝██╔════╝
+███████║██║ █╗ ██║███████║██████╔╝█████╗  ██╔██╗ ██║█████╗  ███████╗███████╗
+██╔══██║██║███╗██║██╔══██║██╔══██╗██╔══╝  ██║╚██╗██║██╔══╝  ╚════██║╚════██║
+██║  ██║╚███╔███╔╝██║  ██║██║  ██║███████╗██║ ╚████║███████╗███████║███████║
+╚═╝  ╚═╝ ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═══╝╚══════╝╚══════╝╚══════╝
+
+ ██████╗  ██████╗ ████████╗
+██╔══██╗██╔═══██╗╚══██╔══╝
+██████╔╝██║   ██║   ██║   
+██╔══██╗██║   ██║   ██║   
+██████╔╝╚██████╔╝   ██║   
+╚═════╝  ╚═════╝    ╚═╝   
+";
+
+            // Welcome message in chat
+            AddChatMessage("Assistant", "═══════════════════════════════════════════");
+            AddChatMessage("Assistant", "   WELCOME TO THE CYBERCHATBOT SYSTEM");
+            AddChatMessage("Assistant", "═══════════════════════════════════════════");
+            AddChatMessage("Assistant", "Please enter your name:");
+        }
+
+        private void SendButton_Click(object sender, RoutedEventArgs e)
+        {
+            ProcessUserInput();
+        }
+
+        private void UserInputTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                ProcessUserInput();
+            }
+        }
+
+        private void VoiceButton_Click(object sender, RoutedEventArgs e)
+        {
+            _audioPlayer.PlayGreeting();
+        }
+
+        private void ProcessUserInput()
+        {
+            string input = UserInputTextBox.Text.Trim();
+            if (string.IsNullOrEmpty(input)) return;
+
+            AddChatMessage("You", input);
+
+            if (string.IsNullOrEmpty(_userName))
+            {
+                _userName = input;
+                AddChatMessage("Assistant", $"Welcome, {_userName}! You are now connected to the CyberChatbot System.");
+               
+                AddChatMessage("Assistant", $"I can help you with passwords, phishing, safe browsing, and privacy. What would you like to know, {_userName}?");
+            }
+            else
+            {
+                AddChatMessage("Assistant", $"I'm still learning, {_userName}! Response logic coming soon.");
+            }
+
+            UserInputTextBox.Clear();
+            UserInputTextBox.Focus();
+        }
+
+        private void AddChatMessage(string sender, string message)
+        {
+            var textBlock = new TextBlock
+            {
+                Text = $"{sender}: {message}",
+                Foreground = sender == "You" ? Brushes.LightGreen : Brushes.LightBlue,
+                FontSize = 14,
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(5, 3, 5, 3)
+            };
+
+            ChatStackPanel.Children.Add(textBlock);
+            ChatScrollViewer.ScrollToEnd();
         }
     }
 }
