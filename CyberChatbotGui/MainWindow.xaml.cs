@@ -10,6 +10,7 @@ namespace CyberChatbotGui
     {
         private AudioPlayer _audioPlayer = new AudioPlayer();
         private ResponseHandler _responseHandler = new ResponseHandler();
+        private Memory _memory = new Memory();
         private string _userName = "";
 
         private const string DIVIDER = "================================================";
@@ -97,6 +98,7 @@ namespace CyberChatbotGui
 
         private void HandleNameInput(string name)
         {
+            _memory.UserName = name;
             _userName = name;
             AddChatMessage("Assistant", DIVIDER);
             AddChatMessage("Assistant", $"Welcome, {_userName}! You are now connected to the CyberChatbot System.");
@@ -105,12 +107,66 @@ namespace CyberChatbotGui
         }
         private void HandleChatMessage(string input)
         {
+            string lowerInput = input.ToLower();
+
+            if (lowerInput.Contains("what do you remember") || lowerInput.Contains("what do you know about me"))
+            {
+                if (!_memory.HasName())
+                {
+                    AddChatMessage("Bot", "I don't know anything about you yet. What's your name?");
+                }
+                else
+                {
+                    string info = $"I remember your name is {_memory.UserName}";
+                    if (_memory.HasFavouriteTopic())
+                        info += $", and you're interested in {_memory.FavouriteTopic}";
+                    info += ".";
+                    AddChatMessage("Bot", info);
+                }
+                return;
+            }
+            if (lowerInput.Contains("interested in") || lowerInput.Contains("i like") || lowerInput.Contains("favourite"))
+            {
+                // Try to detect the topic
+                foreach (var topic in new[] { "password", "scam", "privacy", "phishing", "browsing", "malware" })
+                {
+                    if (lowerInput.Contains(topic))
+                    {
+                        _memory.FavouriteTopic = topic;
+                        _memory.RecordTopic(topic);
+                        AddChatMessage("Bot", $"Great, {_memory.UserName}! I'll remember that you're interested in {topic}. It's a crucial part of staying safe online.");
+                        return;
+                    }
+                }
+            }
+
+            // Get response from ResponseHandler
             string response = _responseHandler.GetResponse(input, _userName);
 
+            // Track the topic being discussed
+            foreach (var topic in new[] { "password", "scam", "privacy", "phishing", "browsing", "malware" })
+            {
+                if (lowerInput.Contains(topic))
+                {
+                    _memory.RecordTopic(topic);
+                    break;
+                }
+            }
+
+            // If we have a favourite topic, occasionally reference it
+            if (_memory.HasFavouriteTopic() && _memory.FavouriteTopic != "" && response.Length > 0)
+            {
+                // If user's favourite topic is different from current topic, append a callback
+                if (!lowerInput.Contains(_memory.FavouriteTopic) && new Random().Next(3) == 0)
+                {
+                    response += $" As someone interested in {_memory.FavouriteTopic}, you might also want to review that area.";
+                }
+            }
             AddChatMessage("Assistant", response);
 
 
         }
+
         private void AddChatMessage(string sender, string message)
         {
             var textBlock = new TextBlock

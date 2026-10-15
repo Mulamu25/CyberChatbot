@@ -10,7 +10,7 @@ namespace CyberChatbotGui
         //Dictionary: keyword > list of possible responses
         private readonly Dictionary<string, List<string>> _responseMap;
 
-
+        private string _lastResponse = "";
         //Random generator for picking random responses
         private readonly Random _random = new Random();
 
@@ -117,6 +117,9 @@ namespace CyberChatbotGui
             {
                 if (lowerInput.Contains(keyword))
                 {
+
+                    if (LastTopic != keyword)
+                        _lastResponse = ""; // Reset last response if topic changes
                     LastTopic = keyword;
                     return GetRandomResponse(keyword, userName);
                 }
@@ -127,14 +130,35 @@ namespace CyberChatbotGui
 
         }
 
+        /// <summary>
+        /// Picks a random response from the list for a given topic.
+        /// Avoids repeating the same response twice in a row.
+        /// </summary>
         private string GetRandomResponse(string topic, string userName)
         {
-            if(!_responseMap.ContainsKey(topic))
-                return $" I don't have information about {topic}, {userName}.";
+            if (!_responseMap.ContainsKey(topic))
+                return $"I don't have information about that, {userName}.";
 
-            List<string> response = _responseMap[topic];
-            int index = _random.Next(response.Count);
-            return $"{userName}, {response[index]}";    
+            List<string> responses = _responseMap[topic];
+
+            // If there's only 1 response, just return it
+            if (responses.Count == 1)
+                return $"{userName}, {responses[0]}";
+
+            // Pick a random index that's different from the last one used
+            string selected;
+            int attempts = 0;
+            do
+            {
+                int index = _random.Next(responses.Count);
+                selected = responses[index];
+                attempts++;
+            } while (selected == _lastResponse && attempts < 10);
+
+            // Remember this response so we don't repeat it next time
+            _lastResponse = selected;
+
+            return $"{userName}, {selected}";
         }
     }
 }
