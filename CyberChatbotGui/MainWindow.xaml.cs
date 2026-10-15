@@ -11,6 +11,7 @@ namespace CyberChatbotGui
         private AudioPlayer _audioPlayer = new AudioPlayer();
         private ResponseHandler _responseHandler = new ResponseHandler();
         private Memory _memory = new Memory();
+        private SentimentDetector _sentimentDetector = new SentimentDetector();
         private string _userName = "";
 
         private const string DIVIDER = "================================================";
@@ -109,7 +110,9 @@ namespace CyberChatbotGui
         {
             string lowerInput = input.ToLower();
 
-            if (lowerInput.Contains("what do you remember") || lowerInput.Contains("what do you know about me"))
+            // ==================== RECALL CHECK ====================
+            if (lowerInput.Contains("what do you remember") ||
+                lowerInput.Contains("what do you know about me"))
             {
                 if (!_memory.HasName())
                 {
@@ -125,9 +128,12 @@ namespace CyberChatbotGui
                 }
                 return;
             }
-            if (lowerInput.Contains("interested in") || lowerInput.Contains("i like") || lowerInput.Contains("favourite"))
+
+            // ==================== FAVOURITE TOPIC ====================
+            if (lowerInput.Contains("interested in") ||
+                lowerInput.Contains("i like") ||
+                lowerInput.Contains("favourite"))
             {
-                // Try to detect the topic
                 foreach (var topic in new[] { "password", "scam", "privacy", "phishing", "browsing", "malware" })
                 {
                     if (lowerInput.Contains(topic))
@@ -140,10 +146,35 @@ namespace CyberChatbotGui
                 }
             }
 
-            // Get response from ResponseHandler
+            // ==================== ★★★ SENTIMENT DETECTION ★★★ ====================
+            var sentiment = _sentimentDetector.Detect(input);
+            string sentimentPrefix = _sentimentDetector.GetSentimentPrefix(sentiment, _userName);
+
+            // If sentiment detected but no cybersecurity keyword, give a general helpful response
+            if (sentiment != SentimentDetector.Sentiment.Neutral)
+            {
+                // Get the normal response
+                string normalResponse = _responseHandler.GetResponse(input, _userName);
+
+                // If the response is the "default" (no keyword match), replace with a helpful sentiment response
+                if (normalResponse.Contains("I'm not sure I understand") ||
+                    normalResponse.Contains("Try asking about"))
+                {
+                    string helpful = sentimentPrefix + "Here are some topics I can help with: passwords, scams, privacy, phishing, safe browsing, and malware. Which one interests you?";
+                    AddChatMessage("Bot", helpful);
+                }
+                else
+                {
+                    // Keyword matched AND sentiment detected — add the prefix
+                    AddChatMessage("Bot", sentimentPrefix + normalResponse);
+                }
+                return;
+            }
+
+            // ==================== NORMAL RESPONSE ====================
             string response = _responseHandler.GetResponse(input, _userName);
 
-            // Track the topic being discussed
+            // Track topic being discussed
             foreach (var topic in new[] { "password", "scam", "privacy", "phishing", "browsing", "malware" })
             {
                 if (lowerInput.Contains(topic))
@@ -153,19 +184,17 @@ namespace CyberChatbotGui
                 }
             }
 
-            // If we have a favourite topic, occasionally reference it
-            if (_memory.HasFavouriteTopic() && _memory.FavouriteTopic != "" && response.Length > 0)
+            // Reference favourite topic occasionally
+            if (_memory.HasFavouriteTopic() &&
+                !lowerInput.Contains(_memory.FavouriteTopic) &&
+                new Random().Next(3) == 0)
             {
-                // If user's favourite topic is different from current topic, append a callback
-                if (!lowerInput.Contains(_memory.FavouriteTopic) && new Random().Next(3) == 0)
-                {
-                    response += $" As someone interested in {_memory.FavouriteTopic}, you might also want to review that area.";
-                }
+                response += $" As someone interested in {_memory.FavouriteTopic}, you might also want to review that area.";
             }
-            AddChatMessage("Assistant", response);
 
-
+            AddChatMessage("Bot", response);
         }
+
 
         private void AddChatMessage(string sender, string message)
         {
