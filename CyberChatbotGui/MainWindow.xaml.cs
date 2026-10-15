@@ -9,6 +9,7 @@ namespace CyberChatbotGui
     public partial class MainWindow : Window
     {
         private AudioPlayer _audioPlayer = new AudioPlayer();
+        private ResponseHandler _responseHandler = new ResponseHandler();
         private string _userName = "";
 
         private const string DIVIDER = "================================================";
@@ -104,8 +105,11 @@ namespace CyberChatbotGui
         }
         private void HandleChatMessage(string input)
         {
-            // TODO: Call ResponseHandler here (next step)
-            AddChatMessage("Assistant", $"I'm still learning, {_userName}! Response logic coming soon.");
+            string response = _responseHandler.GetResponse(input, _userName);
+
+            AddChatMessage("Assistant", response);
+
+
         }
         private void AddChatMessage(string sender, string message)
         {
