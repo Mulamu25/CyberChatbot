@@ -33,7 +33,7 @@ A WPF chatbot that educates South African citizens about cybersecurity awareness
 GitHub Actions CI workflow passes successfully
 
 ## YouTube Link
-[Watch the video presentation](https://youtu.be/YOUR_VIDEO_LINK)
+[(https://youtu.be/KwgrEZsXcbo)]
 
 ## Author
 Mulamuleli Mungadi
