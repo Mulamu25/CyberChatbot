@@ -2,6 +2,7 @@
 
 namespace CyberChatbotGui
 {
+    
     public class SentimentDetector
     {
         public enum Sentiment
@@ -14,7 +15,6 @@ namespace CyberChatbotGui
 
         public Sentiment Detect(string input)
         {
-            // Null-safe check - return Neutral if input is empty
             if (string.IsNullOrWhiteSpace(input))
                 return Sentiment.Neutral;
 
@@ -85,3 +85,6 @@ namespace CyberChatbotGui
         }
     }
 }
+
+
+

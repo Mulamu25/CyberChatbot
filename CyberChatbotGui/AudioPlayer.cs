@@ -4,19 +4,15 @@ using System.Media;
 
 namespace CyberChatbotGui
 {
-    /// <summary>
-    /// Plays the voice greeting WAV file.
-    /// </summary>
+    
     public class AudioPlayer
     {
-        /// <summary>
-        /// Plays the CyberGreeting.wav file.
-        /// </summary>
+        
         public void PlayGreeting()
         {
             try
             {
-                // Look for CyberGreeting.wav in the application's output folder
+                
                 string audioPath = Path.Combine(
                     AppDomain.CurrentDomain.BaseDirectory,
                     "CyberGreeting.wav"

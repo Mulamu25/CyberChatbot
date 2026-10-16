@@ -1,164 +1,161 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace CyberChatbotGui
 {
+    
     public class ResponseHandler
     {
-
-        //Dictionary: keyword > list of possible responses
         private readonly Dictionary<string, List<string>> _responseMap;
-
-        private string _lastResponse = "";
-        //Random generator for picking random responses
         private readonly Random _random = new Random();
+        private string _lastResponse = "";
 
-        //Tracks the last topic discussed(for "tell me more")
-        public string LastTopic { get; private set; } = "";
+        public string LastTopic { get; set; } = "";
 
         public ResponseHandler()
+
         {
             _responseMap = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
             {
-
-                // PASSWORDS
+                // ==================== PASSWORDS ====================
                 ["password"] = new List<string>
                 {
-                    "Use strong, unique passwords for each account. A good password should be at least 12 characters long, mixing uppercase, lowercase, numbers, and symbols. Avoid using personal details like birthdays or pet names.",
-                    "Never reuse the same password across multiple accounts. If one account is breached, all accounts using that password become vulnerable. Consider using a password manager to generate and store strong passwords securely.",
-                    "Enable Two-Factor Authentication (2FA) wherever possible. This adds an extra layer of security even if someone steals your password, they can't access your account without the second factor.",
-                    "Change your passwords immediately if you suspect a breach. Also, check if your email has been involved in known data breaches using sites like HaveIBeenPwned.",
-                    "Use a password manager like Bitwarden, 1Password, or LastPass. They generate strong passwords, store them securely, and auto-fill them for you — so you only need to remember one master password."
+                    "Use strong, unique passwords for every account. A strong password should be at least 12 characters long and combine uppercase letters, lowercase letters, numbers, and symbols. Avoid using personal details like your birthday, pet's name, or ID number — these are easy for attackers to guess from your social media.",
 
+                    "Never reuse passwords across multiple accounts. If one site suffers a breach (and many do), attackers will try the same email-and-password combo on other popular sites — a technique called 'credential stuffing'. Using a unique password per account limits the damage to just one site.",
+
+                    "Enable Two-Factor Authentication (2FA) on all accounts that support it — especially email, banking, and social media. 2FA adds a second layer of security beyond your password. Even if someone steals your password, they can't log in without the second factor (a code from your phone or an authenticator app).",
+
+                    "Consider using a reputable password manager such as Bitwarden, 1Password, or LastPass. A password manager generates strong random passwords, stores them encrypted, and auto-fills them across your devices. You only need to remember one strong master password.",
+
+                    "Check if your email has been involved in a data breach using sites like HaveIBeenPwned.com. If your credentials show up in a breach, change that password immediately on any account where you reused it, and enable 2FA going forward."
                 },
 
-                //SCAMS
-                ["scams"] = new List<string>
+                // ==================== SCAMS ====================
+                ["scam"] = new List<string>
                 {
-                    "Be cautious of messages asking for personal information. Scammers often disguise themselves as trusted organisations like banks, SARS, or courier companies. Always verify the sender by contacting the organisation directly using their official number.",
-                    "If something sounds too good to be true, it probably is that's a classic scam sign.",
-                    "Never send money or share banking details with someone you haven't met or verified in person. Romance scams and investment scams often start online and end with financial loss.",
-                    "Legitimate companies never ask for your password or PIN over the phone or email.",
-                    "If you're unsure about a message, contact the organisation directly using their official number."
+                    "Be highly suspicious of unsolicited messages that pressure you to act quickly. Scammers create urgency — 'Your account will be closed in 24 hours', 'You've won a prize, claim now' — to make you act before thinking. Legitimate organisations never rush you into sharing personal information or making payments.",
+
+                    "If an offer sounds too good to be true, it almost certainly is. Common scam formats include fake lottery wins, unexpected refunds, fake job offers, and 'romance' scams. Remember: no legitimate company gives away money without you entering a competition first.",
+
+                    "Never send money or share banking details with anyone you haven't met or verified in person. This applies to online sellers, romantic partners, and even people claiming to be from your bank. If a transaction feels rushed or unusual, stop and verify independently.",
+
+                    "Legitimate companies — including your bank, SARS, and courier services — will never ask for your password, PIN, or OTP (one-time PIN) over the phone, email, or SMS. If someone does, hang up and report it. Your OTP is the last line of defense for your account — never share it.",
+
+                    "If you're unsure about a suspicious message, contact the organisation directly using the number on their official website or the back of your bank card — never the number provided in the suspicious message. Also report scams to the South African Fraud Prevention Service (SAFPS)."
                 },
 
-                // PRIVACY
+                // ==================== PRIVACY ====================
                 ["privacy"] = new List<string>
                 {
-                    "Review your social media privacy settings regularly. Limit what strangers can see your location, relationship status, phone number, and daily routine should not be public.",
-                    "Avoid sharing your location, ID number, or daily routine publicly online.",
-                    "Use a VPN when connecting to public Wi-Fi. Public networks are often unsecured, and attackers on the same network can intercept your data including passwords and banking details.",
-                    "Read privacy policies before signing up know what data companies collect.",
-                    "Regularly check which apps have access to your personal data and revoke unnecessary permissions."
+                    "Review your social media privacy settings regularly at least every few months. Limit what strangers can see: your location, phone number, relationship status, workplace, and daily routine. Attackers can piece together your life from public posts and use it for identity theft or physical crimes.",
+
+                    "Avoid oversharing personal information online. Details like your ID number, home address, holiday plans, or children's school should never be public. Even seemingly harmless posts (e.g., 'Off to Bali for 2 weeks!') can alert burglars that your home is empty.",
+
+                    "Always use a VPN (Virtual Private Network) when connecting to public Wi-Fi at airports, coffee shops, hotels, or malls. Public networks are often unsecured, and attackers on the same network can intercept your data, including passwords and banking details. A VPN encrypts your traffic so it can't be read.",
+
+                    "Read privacy policies before signing up for apps or services. Look for what data the company collects, how they use it, and whether they share it with third parties. If the policy is vague or overly complex, consider whether the service is worth the privacy trade-off.",
+
+                    "Regularly audit app permissions on your phone. Go to your device's settings and revoke unnecessary access to your camera, microphone, contacts, and location. Many apps request permissions they don't actually need — and some sell that data to advertisers or worse."
                 },
 
-                // PHISHING
-
+                // ==================== PHISHING ====================
                 ["phishing"] = new List<string>
-                {
-                    "Be cautious of emails asking for personal information. Always verify the sender's email address carefully attackers often use addresses that look almost identical to real ones (e.g., 'support@paypa1.com' instead of 'support@paypal.com').",
-                    "Hover over links before clicking to check if the URL matches the real website. If the domain doesn't match the organisation's official domain, don't click.",
-                    "Watch for urgent or emotional language in emails — phrases like 'Your account will be closed in 24 hours' or 'Immediate action required' are designed to make you act without thinking.",
-                    "Never enter your password on a page you reached through an email link. Instead, open a new browser tab and navigate to the site directly.",
-                    "If an email feels off, report it as phishing and delete it without clicking anything. Most email providers (Gmail, Outlook) have a 'Report phishing' option."
 
+                {
+                    "Always verify the sender's email address carefully before responding to any email. Phishing attacks often use addresses that look almost identical to real ones — for example, 'support@paypa1.com' (with a number 1) instead of 'support@paypal.com'. Look for small misspellings, unusual domains, and slight variations.",
+
+                    "Hover over any link in an email before clicking it. The real URL will appear at the bottom of your screen (or in a tooltip). If the domain doesn't match the organisation's official website, don't click. Attackers use misleading links to redirect you to fake login pages that steal your credentials.",
+
+                    "Watch for urgent or emotionally-charged language — phrases like 'Your account has been compromised', 'Immediate action required', or 'Final warning'. Legitimate companies rarely use panic-inducing tactics. If an email pressures you to act fast, slow down and verify through official channels first.",
+
+                    "Never enter your password or personal information on a page you reached through an email link. Instead, open a new browser tab and navigate directly to the organisation's website by typing the address yourself. This ensures you're on the legitimate site, not a look-alike phishing clone.",
+
+                    "Report suspicious emails as phishing — most email providers (Gmail, Outlook, Yahoo) have a 'Report phishing' button. Reporting helps your provider block similar attacks for everyone. Then delete the email without clicking any links or attachments. Attachments can contain malware even if they look like innocent PDFs or invoices."
                 },
 
-                // SAFE BROWSING
+                // ==================== SAFE BROWSING ====================
                 ["browsing"] = new List<string>
                 {
-                   "Always check for 'https://' and the padlock icon in the address bar before entering any personal information. The 's' stands for secure it means your data is encrypted.",
-                    "Avoid using public Wi-Fi for sensitive transactions like banking, shopping, or logging into accounts. If you must, use a VPN to encrypt your connection.",
-                    "Keep your browser and extensions updated. Updates often include security patches that fix vulnerabilities attackers could exploit.",
-                    "Clear your cookies and cache regularly. Cookies track your browsing and can be exploited if your device is compromised. Use your browser's privacy settings to auto-clear them.",
-                    "Use an ad-blocker and privacy extensions to avoid malicious ads (malvertising) that can infect your device or redirect you to scam sites."
+                    "Always check for 'https://' and the padlock icon in the address bar before entering any personal information. The 's' stands for 'secure' — it means your data is encrypted between your browser and the website. However, note that HTTPS alone doesn't guarantee a site is legitimate — scammers can also get HTTPS certificates.",
+
+                    "Avoid using public Wi-Fi for sensitive tasks like banking, shopping, or logging into accounts. Public networks (at airports, hotels, coffee shops) are often unsecured, and attackers on the same network can intercept your data. If you must use public Wi-Fi, always connect through a VPN first.",
+
+                    "Keep your browser and all its extensions updated. Updates don't just add new features — they patch security vulnerabilities that attackers actively exploit. Enable automatic updates in Chrome, Firefox, or Edge, and remove extensions you no longer use (each extension is a potential attack vector).",
+
+                    "Clear your cookies and cache regularly — at least once a month. Cookies track your browsing across sites and can be exploited if your device is compromised. Use your browser's privacy settings to auto-clear cookies when you close the browser, or use incognito mode for sensitive searches.",
+
+                    "Use a reputable ad-blocker (uBlock Origin, AdGuard) and a privacy extension. Malicious ads (called 'malvertising') can infect your device with malware or redirect you to scam sites — even on legitimate websites. Ad-blockers reduce your exposure to these threats significantly."
                 },
 
-                // MALWARE
+                // ==================== MALWARE ====================
                 ["malware"] = new List<string>
                 {
-                    "Install reputable antivirus software and keep it updated. Free options like Windows Defender are decent, but paid antivirus (Bitdefender, Kaspersky, Malwarebytes) offers better real-time protection.",
-                    "Don't download files or click links from unknown sources. Malware often spreads through fake downloads, cracked software, and unsolicited email attachments.",
-                    "Keep your operating system and applications updated. Most malware exploits known vulnerabilities that have already been patched updates close these doors.",
-                    "Back up important files regularly to an external drive or cloud storage. This protects you against ransomware attacks, where attackers encrypt your files and demand payment.",
-                    "Avoid pirated software it often contains hidden malware. Free 'cracked' versions of paid software are a common way attackers distribute viruses and trojans."
+                    "Install reputable antivirus software and keep it updated. Windows Defender (built-in) is decent for basic protection, but paid options like Bitdefender, Kaspersky, or Malwarebytes offer better real-time scanning, ransomware protection, and phishing detection. Run a full system scan at least once a week.",
+
+                    "Never download files or click links from unknown sources. Malware often spreads through fake downloads, cracked software, unsolicited email attachments, and pop-up ads claiming your device is 'infected'. If you didn't go looking for the file, don't download it.",
+
+                    "Keep your operating system and all applications updated. Most malware exploits known vulnerabilities that have already been patched by Microsoft, Apple, or app developers. Enable automatic updates and reboot when prompted — the longer you delay, the bigger your window of exposure.",
+
+                    "Back up important files regularly to an external hard drive or cloud storage (Google Drive, OneDrive, Dropbox). This protects you against ransomware attacks, where attackers encrypt your files and demand payment to unlock them. The 3-2-1 rule: 3 copies, on 2 different media, with 1 stored off-site.",
+
+                    "Avoid pirated software at all costs. Free 'cracked' versions of paid software (Adobe Photoshop, Microsoft Office, games) are one of the most common ways attackers distribute viruses, trojans, and cryptominers. The few rands you save are not worth the security risk."
                 }
             };
         }
 
-        public string GetResponse(string input, string userName)
-        {
-            // Null safe check
-            if (string.IsNullOrWhiteSpace(input))
-                return $"I didn't quite catch that, {userName}. Could you rephrase?";
+        // ==================== PUBLIC METHODS ====================
 
-
-            string lowerInput = input.ToLower().Trim();
-
-
-            //   HANDLE "TELL ME MORE"
-            if (lowerInput.Contains("tell me more") ||
-                lowerInput.Contains("another tip") ||
-                lowerInput.Contains("explain more") ||
-                lowerInput.Contains("more info"))
-            {
-                if(!string.IsNullOrEmpty(LastTopic))
-                {
-                    return GetRandomResponse(LastTopic, userName);
-
-                }
-                return $"I'M NOT SURE WHICH TOPIC YOU WANT TO KNOW MORE ABOUT, {userName}. Try asking about passwords, scams, or privacy.";
-
-            }
-
-            //Key word matching
-            foreach (var keyword in _responseMap.Keys)
-            {
-                if (lowerInput.Contains(keyword))
-                {
-
-                    if (LastTopic != keyword)
-                        _lastResponse = ""; // Reset last response if topic changes
-                    LastTopic = keyword;
-                    return GetRandomResponse(keyword, userName);
-                }
-            }
-
-            //default response if no keywords match
-            return $"I'M NOT SURE HOW TO HELP WITH THAT, {userName}. Try asking about passwords, scams, privacy, phishing, safe browsing, or malware.";
-
-        }
-
-        /// <summary>
-        /// Picks a random response from the list for a given topic.
-        /// Avoids repeating the same response twice in a row.
-        /// </summary>
-        private string GetRandomResponse(string topic, string userName)
+        public string GetRandomResponse(string topic, string userName)
         {
             if (!_responseMap.ContainsKey(topic))
                 return $"I don't have information about that, {userName}.";
 
             List<string> responses = _responseMap[topic];
 
-            // If there's only 1 response, just return it
             if (responses.Count == 1)
                 return $"{userName}, {responses[0]}";
 
-            // Pick a random index that's different from the last one used
             string selected;
             int attempts = 0;
             do
             {
+
+
                 int index = _random.Next(responses.Count);
                 selected = responses[index];
                 attempts++;
             } while (selected == _lastResponse && attempts < 10);
 
-            // Remember this response so we don't repeat it next time
             _lastResponse = selected;
-
             return $"{userName}, {selected}";
+        }
+
+        
+        public bool ContainsKeyword(string input, out string matchedTopic)
+        {
+            matchedTopic = "";
+            foreach (var topic in _responseMap.Keys)
+            {
+                if (input.Contains(topic, StringComparison.OrdinalIgnoreCase))
+                {
+                    matchedTopic = topic;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        
+        public IEnumerable<string> GetAllTopics()
+        {
+            return _responseMap.Keys;
+        }
+
+       
+        public void SetLastTopic(string topic)
+        {
+            LastTopic = topic;
         }
     }
 }

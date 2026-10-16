@@ -8,11 +8,9 @@ namespace CyberChatbotGui
 {
     public partial class MainWindow : Window
     {
+        // ==================== FIELDS ====================
         private AudioPlayer _audioPlayer = new AudioPlayer();
-        private ResponseHandler _responseHandler = new ResponseHandler();
-        private Memory _memory = new Memory();
-        private SentimentDetector _sentimentDetector = new SentimentDetector();
-        private string _userName = "";
+        private ChatbotEngine _engine = new ChatbotEngine();
 
         private const string DIVIDER = "================================================";
 
@@ -29,11 +27,12 @@ namespace CyberChatbotGui
             // Set ASCII art in the header
             AsciiArtTextBlock.Text = @"
  ██████╗██╗   ██╗██████╗ ███████╗██████╗ ███████╗███████╗ ██████╗██╗   ██╗██████╗ ██╗████████╗██╗   ██╗
-██╔════╝╚██╗ ██╔╝██╔══██╗██╔════╝██╔══██╗██╔════╝██╔════╝██╔════╝╚██╗ ██╔╝██╔══██╗██║╚══██╔══╝╚██╗ ██╔╝
-██║      ╚████╔╝ ██████╔╝█████╗  ██████╔╝███████╗█████╗  ██║      ╚████╔╝ ██████╔╝██║   ██║    ╚████╔╝ 
-██║       ╚██╔╝  ██╔══██╗██╔══╝  ██╔══██╗╚════██║██╔══╝  ██║       ╚██╔╝  ██╔══██╗██║   ██║     ╚██╔╝  
-╚██████╗   ██║   ██████╔╝███████╗██║  ██║███████║███████╗╚██████╗   ██║   ██║  ██║██║   ██║      ██║   
- ╚═════╝   ╚═╝   ╚═════╝ ╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝ ╚═════╝   ╚═╝   ╚═╝  ╚═╝╚═╝   ╚═╝      ╚═╝   
+██╔════╝╚██╗ ██╔╝██╔══██╗██╔════╝██╔══██╗██╔════╝██╔════╝██╔════╝██║   ██║██╔══██╗██║╚══██╔══╝╚██╗ ██╔╝
+██║      ╚████╔╝ ██████╔╝█████╗  ██████╔╝███████╗█████╗  ██║     ██║   ██║██████╔╝██║   ██║    ╚████╔╝ 
+██║       ╚██╔╝  ██╔══██╗██╔══╝  ██╔══██╗╚════██║██╔══╝  ██║     ██║   ██║██╔══██╗██║   ██║     ╚██╔╝  
+╚██████╗   ██║   ██████╔╝███████╗██║  ██║███████║███████╗╚██████╗╚██████╔╝██║  ██║██║   ██║      ██║   
+ ╚═════╝   ╚═╝   ╚═════╝ ╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝   ╚═╝      ╚═╝   
+
 
  █████╗ ██╗    ██╗ █████╗ ██████╗ ███████╗███╗   ██╗███████╗███████╗███████╗
 ██╔══██╗██║    ██║██╔══██╗██╔══██╗██╔════╝████╗  ██║██╔════╝██╔════╝██╔════╝
@@ -51,23 +50,16 @@ namespace CyberChatbotGui
 ";
 
             // Welcome message in chat
-            AddChatMessage("Assistant", DIVIDER);
-            AddChatMessage("Assistant", "   WELCOME TO THE CYBERCHATBOT SYSTEM");
-            AddChatMessage("Assistant", DIVIDER);
-            AddChatMessage("Assistant", "Please enter your name:");
+           
+            AddChatMessage("Assistant", "   WELCOME TO THE CYBERCHATBOT SYSTEM\n\nPlease enter your name:");
+            
+            
         }
-
-        private void SendButton_Click(object sender, RoutedEventArgs e)
-        {
-            ProcessUserInput();
-        }
+        private void SendButton_Click(object sender, RoutedEventArgs e) => ProcessUserInput();
 
         private void UserInputTextBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
-            {
-                ProcessUserInput();
-            }
+            if (e.Key == Key.Enter) ProcessUserInput();
         }
 
         private void VoiceButton_Click(object sender, RoutedEventArgs e)
@@ -75,141 +67,113 @@ namespace CyberChatbotGui
             _audioPlayer.PlayGreeting();
         }
 
+        
         private void ProcessUserInput()
         {
-            string input = UserInputTextBox.Text.Trim();
-
-            //Doesn't process empty messages
+            string input = UserInputTextBox.Text?.Trim();
             if (string.IsNullOrEmpty(input)) return;
 
-            //it shows user's message
             AddChatMessage("You", input);
-
-            if (string.IsNullOrEmpty(_userName))
-
-                HandleNameInput(input);
-
-            else
-                HandleChatMessage(input);
-
-            //Reset input box
             UserInputTextBox.Clear();
             UserInputTextBox.Focus();
-        }
 
-        private void HandleNameInput(string name)
-        {
-            _memory.UserName = name;
-            _userName = name;
-            AddChatMessage("Assistant", DIVIDER);
-            AddChatMessage("Assistant", $"Welcome, {_userName}! You are now connected to the CyberChatbot System.");
-            AddChatMessage("Assistant", DIVIDER);
-            AddChatMessage("Assistant", $"I can help you with passwords, phishing, safe browsing, and privacy. What would you like to know, {_userName}?");
-        }
-        private void HandleChatMessage(string input)
-        {
-            string lowerInput = input.ToLower();
-
-            // ==================== RECALL CHECK ====================
-            if (lowerInput.Contains("what do you remember") ||
-                lowerInput.Contains("what do you know about me"))
+            // First input = name
+            if (!_engine.HasName)
             {
-                if (!_memory.HasName())
-                {
-                    AddChatMessage("Bot", "I don't know anything about you yet. What's your name?");
-                }
-                else
-                {
-                    string info = $"I remember your name is {_memory.UserName}";
-                    if (_memory.HasFavouriteTopic())
-                        info += $", and you're interested in {_memory.FavouriteTopic}";
-                    info += ".";
-                    AddChatMessage("Bot", info);
-                }
+                _engine.UserName = input;
+                
+                AddChatMessage("Bot", $"Welcome, {_engine.UserName}! You are now connected to the CyberChatbot System.");
+                
+                AddChatMessage("Bot", $"I can help you with passwords, phishing, safe browsing, scams, and privacy. What would you like to know, {_engine.UserName}?");
                 return;
             }
 
-            // ==================== FAVOURITE TOPIC ====================
-            if (lowerInput.Contains("interested in") ||
-                lowerInput.Contains("i like") ||
-                lowerInput.Contains("favourite"))
-            {
-                foreach (var topic in new[] { "password", "scam", "privacy", "phishing", "browsing", "malware" })
-                {
-                    if (lowerInput.Contains(topic))
-                    {
-                        _memory.FavouriteTopic = topic;
-                        _memory.RecordTopic(topic);
-                        AddChatMessage("Bot", $"Great, {_memory.UserName}! I'll remember that you're interested in {topic}. It's a crucial part of staying safe online.");
-                        return;
-                    }
-                }
-            }
-
-            // ==================== ★★★ SENTIMENT DETECTION ★★★ ====================
-            var sentiment = _sentimentDetector.Detect(input);
-            string sentimentPrefix = _sentimentDetector.GetSentimentPrefix(sentiment, _userName);
-
-            // If sentiment detected but no cybersecurity keyword, give a general helpful response
-            if (sentiment != SentimentDetector.Sentiment.Neutral)
-            {
-                // Get the normal response
-                string normalResponse = _responseHandler.GetResponse(input, _userName);
-
-                // If the response is the "default" (no keyword match), replace with a helpful sentiment response
-                if (normalResponse.Contains("I'm not sure I understand") ||
-                    normalResponse.Contains("Try asking about"))
-                {
-                    string helpful = sentimentPrefix + "Here are some topics I can help with: passwords, scams, privacy, phishing, safe browsing, and malware. Which one interests you?";
-                    AddChatMessage("Bot", helpful);
-                }
-                else
-                {
-                    // Keyword matched AND sentiment detected — add the prefix
-                    AddChatMessage("Bot", sentimentPrefix + normalResponse);
-                }
-                return;
-            }
-
-            // ==================== NORMAL RESPONSE ====================
-            string response = _responseHandler.GetResponse(input, _userName);
-
-            // Track topic being discussed
-            foreach (var topic in new[] { "password", "scam", "privacy", "phishing", "browsing", "malware" })
-            {
-                if (lowerInput.Contains(topic))
-                {
-                    _memory.RecordTopic(topic);
-                    break;
-                }
-            }
-
-            // Reference favourite topic occasionally
-            if (_memory.HasFavouriteTopic() &&
-                !lowerInput.Contains(_memory.FavouriteTopic) &&
-                new Random().Next(3) == 0)
-            {
-                response += $" As someone interested in {_memory.FavouriteTopic}, you might also want to review that area.";
-            }
-
+            string response = _engine.GetResponse(input);
             AddChatMessage("Bot", response);
         }
 
-
+        
         private void AddChatMessage(string sender, string message)
         {
-            var textBlock = new TextBlock
+            //  COLOURS 
+            Color cyanAccent = Color.FromRgb(0, 217, 255);       
+            Color botBubbleBg = Color.FromRgb(42, 42, 62);        
+            Color deepBackground = Color.FromRgb(30, 30, 46);    
+
+            bool isUser = sender == "You";
+
+            //  OUTER CONTAINER 
+            var container = new StackPanel
             {
-                Text = $"{sender}: {message}",
-                Foreground = sender == "You" ? Brushes.LightGreen : Brushes.LightBlue,
-                FontSize = 14,
-                TextWrapping = TextWrapping.Wrap,
-                Margin = new Thickness(5, 3, 5, 3)
+                Margin = new Thickness(5, 6, 5, 6),
+                MaxWidth = 700,
+                HorizontalAlignment = isUser
+                    ? HorizontalAlignment.Right
+                    : HorizontalAlignment.Left
             };
 
-            ChatStackPanel.Children.Add(textBlock);
+            // "You" LABEL
+            if (isUser)
+            {
+                var label = new TextBlock
+                {
+                    Text = "You",
+                    Foreground = new SolidColorBrush(cyanAccent),
+                    FontSize = 11,
+                    FontWeight = FontWeights.Bold,
+                    Margin = new Thickness(8, 0, 8, 3),
+                    HorizontalAlignment = HorizontalAlignment.Right
+                };
+                container.Children.Add(label);
+            }
+
+            //  BUBBLE GRID (Text + Accent Line) 
+            var bubbleGrid = new Grid();
+            bubbleGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            bubbleGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(3) });   
+
+            //  Message Text 
+            var textBlock = new TextBlock
+            {
+                Text = message,
+                Foreground = isUser
+                    ? new SolidColorBrush(deepBackground)  
+                    : new SolidColorBrush(cyanAccent),      
+                FontSize = 14,
+                TextWrapping = TextWrapping.Wrap,
+                LineHeight = 20,
+                Padding = new Thickness(14, 10, 14, 10)
+            };
+            Grid.SetRow(textBlock, 0);
+
+            //  Accent Line 
+            var accentLine = new Border
+            {
+                Background = new SolidColorBrush(cyanAccent),
+                CornerRadius = new CornerRadius(0, 0, 15, 15),   
+                Height = 3
+            };
+            Grid.SetRow(accentLine, 1);
+
+            // BUBBLE BACKGROUND 
+            var bubble = new Border
+            {
+                CornerRadius = new CornerRadius(15),
+                Background = isUser
+                    ? new SolidColorBrush(cyanAccent)      
+                    : new SolidColorBrush(botBubbleBg),    
+                ClipToBounds = true
+            };
+
+            
+            bubbleGrid.Children.Add(textBlock);
+            bubbleGrid.Children.Add(accentLine);
+            bubble.Child = bubbleGrid;
+
+            container.Children.Add(bubble);
+            ChatStackPanel.Children.Add(container);
+
             ChatScrollViewer.ScrollToEnd();
         }
-
     }
 }
