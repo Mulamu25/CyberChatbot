@@ -17,6 +17,8 @@ namespace CyberChatbotGui
         public MainWindow()
         {
             InitializeComponent();
+
+            TaskRepository testRepo = new TaskRepository();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
