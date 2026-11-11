@@ -10,15 +10,14 @@
         Background="#1E1E2E"
         WindowStartupLocation="CenterScreen"
         Loaded="Window_Loaded">
+
     <Grid Margin="15">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        
-        
-        <!-- ====================HEADER==================== -->
+
+        <!-- ==================== HEADER ==================== -->
         <Border Grid.Row="0"
                 Background="#2A2A3E"
                 CornerRadius="10"
@@ -29,7 +28,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                
+
                 <!-- Title and Subtitle -->
                 <StackPanel Grid.Column="0" VerticalAlignment="Center">
                     <TextBlock x:Name="AsciiArtTextBlock"
@@ -39,7 +38,7 @@
                        HorizontalAlignment="Center"
                        TextAlignment="Center"
                        TextWrapping="NoWrap"/>
-                    
+
                     <TextBlock Text="CYBERSECURITY AWARENESS BOT" 
                        FontSize="18" 
                        FontWeight="Bold" 
@@ -51,9 +50,8 @@
                        Foreground="#A0A0B0"
                        HorizontalAlignment="Center"
                        Margin="0,3,0,0"/>
-
                 </StackPanel>
-                
+
                 <!-- Voice Greeting Button -->
                 <Button Grid.Column="1"
                         x:Name="VoiceButton"
@@ -68,65 +66,114 @@
                         Cursor="Hand"
                         VerticalAlignment="Center"
                         Click="VoiceButton_Click"/>
-                
             </Grid>
         </Border>
-        
-        <!-- =================== CHAT AREA ==============-->
-        <Border Grid.Row="1"
-                Background="#2A2A3E"
-                CornerRadius="10"
-                Padding="15"
-                Margin="0, 0, 0, 10">
-                    <ScrollViewer x:Name="ChatScrollViewer"
-                                  VerticalScrollBarVisibility="Auto">
-                        <StackPanel x:Name="ChatStackPanel"/>
-                        
-                    </ScrollViewer>
-             </Border>
-             
-        
-        <!-- ========================= INPUT AREA ================== -->
-        <Grid Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            
-            <!-- Text Input Box -->
-            <Border Grid.Column="0"
-                    Background="#2A2A3E"
-                    CornerRadius="10"
-                    Padding="5"
-                    Margin="0, 0, 10, 0">
-                <TextBox x:Name="UserInputTextBox"
-                         FontSize="16"
-                         Background="Transparent"
-                         Foreground="White"
-                         BorderThickness="0"
-                         Padding="10"
-                         VerticalContentAlignment="Center"
-                         KeyDown="UserInputTextBox_KeyDown"/>
-            </Border>
-            
-            <!-- Send Button -->
-            <Button Grid.Column="1"
-                    x:Name="SendButton"
-                    Content="SEND"
-                    Width="120"
-                    Height="45"
-                    Background="#00D9FF"
-                    Foreground="#1E1E2E"
-                    FontSize="16"
-                    FontWeight="Bold"
-                    BorderThickness="0"
-                    Cursor="Hand"
-                    Click="SendButton_Click"/>
-            
-        </Grid>
-        
-        
-        
-      </Grid>
+
+        <!-- ==================== TAB CONTROL ==================== -->
+        <TabControl Grid.Row="1" Background="#2A2A3E" BorderThickness="0">
+
+            <!-- TAB 1: CHAT -->
+            <TabItem Header="Chat" Foreground="#00D9FF">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Chat Area -->
+                    <Border Grid.Row="0" Background="#2A2A3E" Padding="15" Margin="0,0,0,10">
+                        <ScrollViewer x:Name="ChatScrollViewer" VerticalScrollBarVisibility="Auto">
+                            <StackPanel x:Name="ChatStackPanel"/>
+                        </ScrollViewer>
+                    </Border>
+
+                    <!-- Input Area -->
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Background="#3D275E" CornerRadius="10" Padding="5" Margin="0,0,10,0">
+                            <TextBox x:Name="UserInputTextBox" FontSize="16" Background="Transparent" Foreground="White" BorderThickness="0" Padding="10" VerticalContentAlignment="Center" KeyDown="UserInputTextBox_KeyDown"/>
+                        </Border>
+
+                        <Button Grid.Column="1" x:Name="SendButton" Content="SEND" Width="120" Height="45" Background="#00D9FF" Foreground="#1E1E2E" FontSize="16" FontWeight="Bold" BorderThickness="0" Cursor="Hand" Click="SendButton_Click"/>
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <!-- TAB 2: TASKS -->
+            <TabItem Header="Tasks" Foreground="#00D9FF">
+                <Grid Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Left side: Add Task Form -->
+                    <StackPanel Grid.Column="0" Margin="10">
+                        <TextBlock Text="Add a Security Task" Foreground="#00D9FF" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+
+                        <TextBlock Text="Title:" Foreground="White"/>
+                        <TextBox x:Name="TaskTitleInput" Margin="0,5,0,10" Padding="5" Background="#3D275E" Foreground="White"/>
+
+                        <TextBlock Text="Description:" Foreground="White"/>
+                        <TextBox x:Name="TaskDescInput" Margin="0,5,0,10" Padding="5" Height="60" Background="#3D275E" Foreground="White"/>
+
+                        <TextBlock Text="Reminder Date:" Foreground="White"/>
+                        <DatePicker x:Name="TaskDateInput" Margin="0,5,0,10" Width="150" HorizontalAlignment="Left" Background="#3D275E" Foreground="Black"/>
+
+                        <Button Content="Add Task" Background="#00D9FF" Foreground="Black" FontWeight="Bold" Padding="10" Margin="0,10,0,0" Click="AddTaskButton_Click"/>
+                    </StackPanel>
+
+                    <!-- Right side: Task List -->
+                    <DataGrid Grid.Column="1" x:Name="TasksDataGrid" Margin="10" AutoGenerateColumns="False" CanUserAddRows="False" 
+                              Background="#1E1E2E" RowBackground="#A0A0B0" AlternatingRowBackground="#C0C0C0" 
+                              GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#2A2A3E">
+
+                        <!-- STYLE FOR ROW TEXT (Make it bold and black) -->
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="Foreground" Value="Black" />
+                                <Setter Property="FontWeight" Value="Bold" />
+                                <Setter Property="FontSize" Value="13" />
+                            </Style>
+                        </DataGrid.RowStyle>
+
+                        <!-- STYLE FOR COLUMN HEADERS (Make it bold and cyan) -->
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="#2A2A3E" />
+                                <Setter Property="Foreground" Value="#00D9FF" />
+                                <Setter Property="FontWeight" Value="Bold" />
+                                <Setter Property="FontSize" Value="14" />
+                                <Setter Property="Padding" Value="10,8" />
+                                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                            </Style>
+                        </DataGrid.ColumnHeaderStyle>
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Title" Binding="{Binding Title}" Width="*"/>
+                            <DataGridTextColumn Header="Status" Binding="{Binding DisplayStatus}" Width="Auto"/>
+                            <DataGridTextColumn Header="Reminder" Binding="{Binding DisplayDate}" Width="Auto"/>
+                            <DataGridTemplateColumn Header="Actions" Width="Auto">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <!-- Complete Button -->
+                                            <Button Content="Complete" Click="CompleteTask_Click" Margin="2" Padding="5,2" Background="#00FF41" Foreground="Black" FontWeight="Bold"/>
+                                            <!-- Delete Button -->
+                                            <Button Content="Delete" Click="DeleteTask_Click" Margin="2" Padding="5,2" Background="#FF4757" Foreground="White" FontWeight="Bold"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+        </TabControl>
+    </Grid>
 </Window>
-        

@@ -11,14 +11,15 @@ namespace CyberChatbotGui
         // ==================== FIELDS ====================
         private AudioPlayer _audioPlayer = new AudioPlayer();
         private ChatbotEngine _engine = new ChatbotEngine();
+        private TaskRepository _taskRepo = new TaskRepository();
 
         private const string DIVIDER = "================================================";
 
         public MainWindow()
         {
             InitializeComponent();
+            LoadTasks();
 
-            TaskRepository testRepo = new TaskRepository();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -177,5 +178,51 @@ namespace CyberChatbotGui
 
             ChatScrollViewer.ScrollToEnd();
         }
+        private void LoadTasks()
+        {
+            TasksDataGrid.ItemsSource = _taskRepo.GetAllTasks();
+        }
+
+        private void AddTaskButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(TaskTitleInput.Text)) return;
+
+            var newTask = new SecurityTask
+            {
+                Title = TaskTitleInput.Text,
+                Description = TaskDescInput.Text,
+                ReminderDate = TaskDateInput.SelectedDate,
+                IsCompleted = false
+            };
+
+            _taskRepo.AddTask(newTask);
+
+            // Clear inputs
+            TaskTitleInput.Clear();
+            TaskDescInput.Clear();
+            TaskDateInput.SelectedDate = null;
+
+            // Refresh list
+            LoadTasks();
+        }
+
+        private void CompleteTask_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.DataContext is SecurityTask task)
+            {
+                _taskRepo.CompleteTask(task.Id);
+                LoadTasks();
+            }
+        }
+
+        private void DeleteTask_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.DataContext is SecurityTask task)
+            {
+                _taskRepo.DeleteTask(task.Id);
+                LoadTasks();
+            }
+        }
+
     }
 }
