@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
+using MySqlConnector;
 using System.Windows;
 
 namespace CyberChatbotGui
 {
     public class TaskRepository
     {
-        // Connects to your SSMS LocalDB
-        private readonly string _connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=CyberChatbotDB;Trusted_Connection=True;";
+        // ⚠️ REPLACE 'YourPasswordHere' WITH YOUR ACTUAL MYSQL ROOT PASSWORD
+        private readonly string _connectionString = "Server=localhost;Database=cyberchatbot;User ID=root;Password=Godblessme@25;";
 
         public TaskRepository()
         {
@@ -19,24 +19,23 @@ namespace CyberChatbotGui
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (MySqlConnection conn = new MySqlConnection(_connectionString))
                 {
                     conn.Open();
                     string query = @"
-                        IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='SecurityTasks' AND xtype='U')
-                        CREATE TABLE SecurityTasks (
-                            Id INT IDENTITY(1,1) PRIMARY KEY,
-                            Title NVARCHAR(100) NOT NULL,
-                            Description NVARCHAR(500),
+                        CREATE TABLE IF NOT EXISTS SecurityTasks (
+                            Id INT AUTO_INCREMENT PRIMARY KEY,
+                            Title VARCHAR(100) NOT NULL,
+                            Description VARCHAR(500),
                             ReminderDate DATETIME NULL,
-                            IsCompleted BIT DEFAULT 0
+                            IsCompleted BOOLEAN DEFAULT FALSE
                         )";
-                    using (SqlCommand cmd = new SqlCommand(query, conn)) { cmd.ExecuteNonQuery(); }
+                    using (MySqlCommand cmd = new MySqlCommand(query, conn)) { cmd.ExecuteNonQuery(); }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Database Error: {ex.Message}\n\nTasks will not save.", "Connection Error");
+                MessageBox.Show($"Database Error: {ex.Message}\n\nTasks will not save. Check your MySQL password.", "Connection Error");
             }
         }
 
@@ -44,11 +43,11 @@ namespace CyberChatbotGui
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (MySqlConnection conn = new MySqlConnection(_connectionString))
                 {
                     conn.Open();
                     string query = "INSERT INTO SecurityTasks (Title, Description, ReminderDate, IsCompleted) VALUES (@Title, @Desc, @Date, @Complete)";
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    using (MySqlCommand cmd = new MySqlCommand(query, conn))
                     {
                         cmd.Parameters.AddWithValue("@Title", task.Title);
                         cmd.Parameters.AddWithValue("@Desc", task.Description ?? (object)DBNull.Value);
@@ -66,12 +65,12 @@ namespace CyberChatbotGui
             var tasks = new List<SecurityTask>();
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (MySqlConnection conn = new MySqlConnection(_connectionString))
                 {
                     conn.Open();
                     string query = "SELECT Id, Title, Description, ReminderDate, IsCompleted FROM SecurityTasks";
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -95,11 +94,11 @@ namespace CyberChatbotGui
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (MySqlConnection conn = new MySqlConnection(_connectionString))
                 {
                     conn.Open();
                     string query = "DELETE FROM SecurityTasks WHERE Id = @Id";
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    using (MySqlCommand cmd = new MySqlCommand(query, conn))
                     {
                         cmd.Parameters.AddWithValue("@Id", id);
                         cmd.ExecuteNonQuery();
@@ -113,11 +112,11 @@ namespace CyberChatbotGui
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (MySqlConnection conn = new MySqlConnection(_connectionString))
                 {
                     conn.Open();
                     string query = "UPDATE SecurityTasks SET IsCompleted = 1 WHERE Id = @Id";
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    using (MySqlCommand cmd = new MySqlCommand(query, conn))
                     {
                         cmd.Parameters.AddWithValue("@Id", id);
                         cmd.ExecuteNonQuery();
