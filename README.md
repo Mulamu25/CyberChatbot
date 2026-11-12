@@ -35,6 +35,12 @@ A WPF (Windows Presentation Foundation) desktop application built in C#. This fi
 - ActivityLog.cs: Recent timestamped actions.
 - .github/workflows/ci.yml: Automated Windows build with .NET 10.
 
+## CI WORKFLOW screenshot
+- <img width="878" height="228" alt="ci_workflow-pass" src="https://github.com/user-attachments/assets/0edd9f2f-06ee-4288-ac7b-088359f40a01" />
+
+
+
+
 ## GitHub and Releases
 The repository contains 6+ meaningful commits, version tags, and release notes:
 
