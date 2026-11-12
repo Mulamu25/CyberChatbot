@@ -1,43 +1,54 @@
-# CyberChatbot - Cybersecurity Awareness Bot
+# PROG6221 — Cybersecurity Awareness Chatbot (Final POE)
 
-## Description
-A WPF chatbot that educates South African citizens about cybersecurity awareness.
+A WPF (Windows Presentation Foundation) desktop application built in C#. This final part extends the chatbot into a full Task Assistant with MySQL database integration, a Quiz Mini-Game, NLP simulation, and an Activity Log.
 
-## Parts
-- **Part 1:** Console chatbot (`CyberChatbot/` folder)
-- **Part 2:** WPF GUI chatbot (`CyberChatbotGui/` folder)
+## Requirements
+- Windows 10/11
+- Visual Studio 2022 (with .NET desktop development workload)
+- .NET 10.0 SDK (or .NET 8.0)
+- MySQL Server 8+ running locally (or MySQL Workbench)
 
-## Part 2 Features
--  Voice greeting on startup +  button
-- ASCII art in the header
--  Rounded chat bubbles (user right, bot left)
--  6 topics: password, phishing, browsing, scam, privacy, malware
--  Random responses (no repeats)
--  "Tell me more" / "another tip" support
--  Memory — remembers name and favourite topic
--  Sentiment detection — detects worried, curious, frustrated
--  Input validation + default response
+## MySQL Setup
+1. Open **MySQL Workbench** and create a database named `cyberchatbot`:
+   ```sql
+   CREATE DATABASE cyberchatbot;
+2. private readonly string _connectionString = "Server=localhost;Database=cyberchatbot;User ID=root;Password=Godblessme@25;";
+   
+## Feature Demonstration
+> Chat: My name is Thabo; I am interested in privacy; What is my favourite topic?; I am worried about phishing; another tip.
+> NLP Tasks (Chat): add a task to enable 2FA; remind me to update my password tomorrow; add a reminder to check privacy settings in 7 days; show tasks.
+> Task Tab: Add a title, description, and optional date. Complete or delete tasks. Overdue tasks are highlighted in red. Tasks persist in MySQL.
+> Quiz: Click the Quiz tab to answer 12 multiple-choice and true/false questions. Immediate colour-coded feedback (Green for correct, Red for incorrect) and a final score.
+> Activity Log (Chat): show activity log or what have you done to see the latest 5 actions.
+> Voice: CyberGreeting.wav plays at launch or by clicking the Greeting button.
 
-## Setup Requirements
-- .NET 10.0 SDK or later
-- Windows OS (for WPF + audio playback)
-- Visual Studio 2022 or later
+## Architecture
+>MainWindow.xaml.cs: WPF GUI and event handlers.
+>ChatbotEngine.cs: The brain connecting keywords, sentiment, and NLP memory.
+>ResponseHandler.cs: Random cybersecurity tips.
+>Memory.cs: Remembers user's name and favourite topic.
+>SentimentDetector.cs: Detects worried, curious, and frustrated emotions.
+>TaskRepository.cs: Parameterized MySQL CRUD operations.
+>Models.cs: Data structures for tasks (with overdue logic).
+>QuizEngine.cs: 12-question scored quiz.
+>IntentParser.cs: Regex-based NLP simulation for natural language.
+>ActivityLog.cs: Recent timestamped actions.
+>.github/workflows/ci.yml: Automated Windows build with .NET 10.
 
-## How to Run
-1. Clone the repository
-2. Open `CyberChatbot.sln` in Visual Studio
-3. Set `CyberChatbotGui` as the Startup Project
-4. Press **F5** to run
+## GitHub and Releases
+The repository contains 6+ meaningful commits, version tags, and release notes:
 
-## CI Status
-GitHub Actions CI workflow passes successfully
+v1.0: Part 1 Console App
+v2.0: Part 2 WPF GUI
+v3.0: Final POE (Tasks, DB, Quiz, NLP, Log)
 
-## YouTube Link
-[(https://youtu.be/KwgrEZsXcbo)]
+## YOUTUBE LINK
 
-## Author
-Mulamuleli Mungadi
-Student Number: ST10498756
+## AUTHOR
+MULAMULELI MUNGADI
 
-## References
-Pieterse, H. 2021. The Cyber Threat Landscape in South Africa: A 10-Year Review. *The African Journal of Information and Communication*, 28(28). doi: https://doi.org/10.23962/10539/32213.
+## REFERENCES
+Pieterse, H. 2021. The Cyber Threat Landscape in South Africa: A 10-Year Review. The African Journal of Information and Communication, 28(28).
+
+
+
