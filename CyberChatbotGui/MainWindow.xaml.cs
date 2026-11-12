@@ -12,6 +12,8 @@ namespace CyberChatbotGui
         private AudioPlayer _audioPlayer = new AudioPlayer();
         private ChatbotEngine _engine = new ChatbotEngine();
         private TaskRepository _taskRepo = new TaskRepository();
+        private QuizEngine _quizEngine;
+
 
         private const string DIVIDER = "================================================";
 
@@ -223,6 +225,75 @@ namespace CyberChatbotGui
                 LoadTasks();
             }
         }
+        private void StartQuizBtn_Click(object sender, RoutedEventArgs e)
+        {
+            _quizEngine = new QuizEngine();
+            StartQuizBtn.Visibility = Visibility.Collapsed; // Hide start button
+            QuizOptionsPanel.Visibility = Visibility.Visible;
+            QuizFeedbackText.Text = "";
+            LoadQuestion();
+        }
 
+        private void LoadQuestion()
+        {
+            if (_quizEngine == null || _quizEngine.IsFinished())
+            {
+                ShowQuizResults();
+                return;
+            }
+
+            var q = _quizEngine.GetCurrentQuestion();
+            QuizQuestionText.Text = $"Q{_quizEngine.CurrentQuestionIndex + 1}: {q.QuestionText}";
+            OptionA.Content = q.OptionA;
+            OptionB.Content = q.OptionB;
+            OptionC.Content = q.OptionC;
+            OptionD.Content = q.OptionD;
+
+            // Hide buttons if it's a True/False question (where C and D are N/A)
+            OptionC.Visibility = q.OptionC == "N/A" ? Visibility.Collapsed : Visibility.Visible;
+            OptionD.Visibility = q.OptionD == "N/A" ? Visibility.Collapsed : Visibility.Visible;
+
+            QuizOptionsPanel.IsEnabled = true;
+            QuizFeedbackText.Text = "";
+        }
+
+        private void QuizOption_Click(object sender, RoutedEventArgs e)
+        {
+            if (_quizEngine == null) return;
+
+            Button btn = sender as Button;
+            string answer = btn.Tag.ToString();
+
+            bool isCorrect = _quizEngine.SubmitAnswer(answer);
+            var q = _quizEngine.GetCurrentQuestion();
+
+            if (isCorrect)
+                QuizFeedbackText.Text = "✅ Correct! " + q.Explanation;
+            else
+                QuizFeedbackText.Text = $"❌ Incorrect. The answer was {q.CorrectAnswer}. " + q.Explanation;
+
+            QuizOptionsPanel.IsEnabled = false; // Disable buttons so they can't click twice
+            _quizEngine.NextQuestion();
+
+            // Wait 3.5 seconds and load next question
+            var timer = new System.Windows.Threading.DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(3.5);
+            timer.Tick += (s, args) => { timer.Stop(); LoadQuestion(); };
+            timer.Start();
+        }
+
+        private void ShowQuizResults()
+        {
+            QuizQuestionText.Text = $"Quiz Complete! Your Score: {_quizEngine.Score} / {_quizEngine.GetTotalQuestions()}";
+
+            if (_quizEngine.Score >= 10)
+                QuizFeedbackText.Text = "Great job! You're a cybersecurity pro!";
+            else
+                QuizFeedbackText.Text = "Keep learning to stay safe online!";
+
+            QuizOptionsPanel.Visibility = Visibility.Collapsed;
+            StartQuizBtn.Visibility = Visibility.Visible;
+            StartQuizBtn.Content = "Restart Quiz";
+        }
     }
 }
