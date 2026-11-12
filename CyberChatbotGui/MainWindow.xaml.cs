@@ -95,6 +95,11 @@ namespace CyberChatbotGui
 
             string response = _engine.GetResponse(input);
             AddChatMessage("Bot", response);
+            // If the user added a task via chat, refresh the DataGrid!
+            if (response.Contains("Got it! I've added the task"))
+            {
+                LoadTasks();
+            }
         }
 
         

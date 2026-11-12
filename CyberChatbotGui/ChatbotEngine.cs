@@ -10,6 +10,11 @@ namespace CyberChatbotGui
         private readonly Memory _memory = new Memory();
         private readonly SentimentDetector _sentiment = new SentimentDetector();
         private readonly ResponseHandler _responseHandler = new ResponseHandler();
+        private IntentParser _intentParser = new IntentParser();
+        public ActivityLog Log = new ActivityLog();
+        private TaskRepository _taskRepo = new TaskRepository();// So the chat can save tasks
+
+
 
         // ==================== PUBLIC PROPERTIES ====================
         public string UserName
@@ -28,6 +33,42 @@ namespace CyberChatbotGui
                 return $"I didn't quite catch that, {_memory.UserName}. Could you rephrase?";
 
             string question = userInput.ToLower().Trim();
+            // ==================== PART 3: NLP INTEGRATION ====================
+            string intent = _intentParser.ParseIntent(question, out string taskTitle, out string taskDate);
+
+            if (intent == "ADD_TASK")
+            {
+                var newTask = new SecurityTask
+                {
+                    Title = taskTitle,
+                    Description = "Added via Chat NLP",
+                    IsCompleted = false
+                };
+
+                if (!string.IsNullOrEmpty(taskDate))
+                {
+                    newTask.ReminderDate = DateTime.Parse(taskDate);
+                }
+
+                _taskRepo.AddTask(newTask);
+                Log.AddLog($"NLP: Added task '{taskTitle}'");
+                return $"Got it! I've added the task: '{taskTitle}'. You can view it in the Tasks tab.";
+            }
+            else if (intent == "SHOW_TASKS")
+            {
+                Log.AddLog("Viewed tasks via chat");
+                return "Please click on the 'Tasks' tab at the top to view and manage your security tasks.";
+            }
+            else if (intent == "START_QUIZ")
+            {
+                Log.AddLog("Started quiz via chat");
+                return "Please click on the 'Quiz' tab at the top to start the Cybersecurity Mini-Game!";
+            }
+            else if (intent == "SHOW_LOG")
+            {
+                return Log.GetLogSummary();
+            }
+            // ================================================================
 
             // ==================== MEMORY QUERIES ====================
             if (question.Contains("what is my name") ||
