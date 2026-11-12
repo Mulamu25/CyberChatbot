@@ -268,9 +268,9 @@ namespace CyberChatbotGui
             var q = _quizEngine.GetCurrentQuestion();
 
             if (isCorrect)
-                QuizFeedbackText.Text = "✅ Correct! " + q.Explanation;
+                QuizFeedbackText.Text = " Correct! " + q.Explanation;
             else
-                QuizFeedbackText.Text = $"❌ Incorrect. The answer was {q.CorrectAnswer}. " + q.Explanation;
+                QuizFeedbackText.Text = $" Incorrect. The answer was {q.CorrectAnswer}. " + q.Explanation;
 
             QuizOptionsPanel.IsEnabled = false; // Disable buttons so they can't click twice
             _quizEngine.NextQuestion();
