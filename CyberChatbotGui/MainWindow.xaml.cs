@@ -233,6 +233,7 @@ namespace CyberChatbotGui
         private void StartQuizBtn_Click(object sender, RoutedEventArgs e)
         {
             _quizEngine = new QuizEngine();
+            _engine.Log.AddLog("Started Quiz.");
             StartQuizBtn.Visibility = Visibility.Collapsed; // Hide start button
             QuizOptionsPanel.Visibility = Visibility.Visible;
             QuizFeedbackText.Text = "";

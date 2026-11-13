@@ -52,7 +52,7 @@ namespace CyberChatbotGui
 
             //NLP for Showing Activity log
             if(lowerInput.Contains("show activity log") || lowerInput.Contains("what have you done"))
-                return "SHOW_ACTIVITY_LOG";
+                return "SHOW_LOG";
             
             return "UNKNOWN";
 

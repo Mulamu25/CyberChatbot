@@ -154,7 +154,7 @@
                         </DataGrid.ColumnHeaderStyle>
 
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Title" Binding="{Binding Title}" Width="*"/>
+                            <DataGridTextColumn Header="Title" Binding="{Binding Title}" Width="*" MinWidth="200"/>
                             <DataGridTextColumn Header="Status" Binding="{Binding DisplayStatus}" Width="Auto"/>
                             <DataGridTextColumn Header="Reminder" Binding="{Binding DisplayDate}" Width="Auto"/>
                             <DataGridTemplateColumn Header="Actions" Width="Auto">
