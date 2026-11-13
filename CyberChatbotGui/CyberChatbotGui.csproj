@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="..\..\..\..\OneDrive\Imagens\Screenshots\ci_workflow-pass.png" Link="screenshot-ci\ci_workflow-pass.png" />
     <Content Include="CyberGreeting.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -20,6 +21,10 @@
 
   <ItemGroup>
     <PackageReference Include="MySqlConnector" Version="2.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="screenshot-ci\" />
   </ItemGroup>
 
 </Project>
