@@ -15,8 +15,9 @@ namespace CyberChatbotGui
             string lowerInput = input.ToLower().Trim();
 
             //NLP for Adding a Task
-            var taskMatch = Regex.Match(input, @"(?:remind me to|add a task to|add task to|set a reminder to|add a task)\s+(.+)", RegexOptions.IgnoreCase);
-            if(taskMatch.Success)
+            // Advanced NLP for Adding a Task (catches more variations)
+            var taskMatch = Regex.Match(input, @"(?:remind me to|add a task to|add task to|set a reminder to|add a task|i need to|remember to)\s+(.+)", RegexOptions.IgnoreCase);
+            if (taskMatch.Success)
             {
                 string fullTask = taskMatch.Groups[1].Value.Trim();
 

@@ -57,7 +57,7 @@ namespace CyberChatbotGui
             // Welcome message in chat
            
             AddChatMessage("Assistant", "   WELCOME TO THE CYBERCHATBOT SYSTEM\n\nPlease enter your name:");
-            
+            CheckForOverdueTasks();
             
         }
         private void SendButton_Click(object sender, RoutedEventArgs e) => ProcessUserInput();
@@ -218,6 +218,7 @@ namespace CyberChatbotGui
             if (sender is Button btn && btn.DataContext is SecurityTask task)
             {
                 _taskRepo.CompleteTask(task.Id);
+                AddChatMessage("Bot", $"Great job! I've marked the task '{task.Title}' as completed.");
                 LoadTasks();
             }
         }
@@ -227,6 +228,7 @@ namespace CyberChatbotGui
             if (sender is Button btn && btn.DataContext is SecurityTask task)
             {
                 _taskRepo.DeleteTask(task.Id);
+                AddChatMessage("Bot", $"I've deleted the task '{task.Title}'.");
                 LoadTasks();
             }
         }
@@ -256,9 +258,8 @@ namespace CyberChatbotGui
             OptionD.Content = q.OptionD;
 
             // Hide buttons if it's a True/False question (where C and D are N/A)
-            OptionC.Visibility = q.OptionC == "N/A" ? Visibility.Collapsed : Visibility.Visible;
-            OptionD.Visibility = q.OptionD == "N/A" ? Visibility.Collapsed : Visibility.Visible;
-
+            OptionC.Visibility = q.OptionC.Contains("N/A") ? Visibility.Collapsed : Visibility.Visible;
+            OptionD.Visibility = q.OptionD.Contains("N/A") ? Visibility.Collapsed : Visibility.Visible;
             QuizOptionsPanel.IsEnabled = true;
             QuizFeedbackText.Text = "";
         }
@@ -267,25 +268,72 @@ namespace CyberChatbotGui
         {
             if (_quizEngine == null) return;
 
-            Button btn = sender as Button;
-            string answer = btn.Tag.ToString();
+            Button clickedButton = sender as Button;
+            string answer = clickedButton.Tag.ToString();
+            var currentQuestion = _quizEngine.GetCurrentQuestion();
 
+            // 1. Disable all buttons so they can't click twice
+            QuizOptionsPanel.IsEnabled = false;
+
+            // 2. Check if the answer is correct
             bool isCorrect = _quizEngine.SubmitAnswer(answer);
-            var q = _quizEngine.GetCurrentQuestion();
 
-            if (isCorrect)
-                QuizFeedbackText.Text = " Correct! " + q.Explanation;
+            // 3. Highlight the correct button in GREEN
+            Button correctButton = GetButtonByTag(currentQuestion.CorrectAnswer);
+            if (correctButton != null)
+            {
+                correctButton.Background = new SolidColorBrush(Color.FromRgb(0, 255, 65)); // Bright Green
+                correctButton.Foreground = Brushes.Black;
+            }
+
+            // 4. If they clicked the wrong answer, highlight their wrong choice in RED
+            if (!isCorrect)
+            {
+                clickedButton.Background = new SolidColorBrush(Color.FromRgb(255, 71, 87)); // Red
+                clickedButton.Foreground = Brushes.White;
+
+                QuizFeedbackText.Foreground = new SolidColorBrush(Color.FromRgb(255, 71, 87)); // Red feedback text
+                QuizFeedbackText.Text = $" Incorrect. The answer was {correctButton.Content}. " + currentQuestion.Explanation;
+            }
             else
-                QuizFeedbackText.Text = $" Incorrect. The answer was {q.CorrectAnswer}. " + q.Explanation;
+            {
+                QuizFeedbackText.Foreground = new SolidColorBrush(Color.FromRgb(0, 255, 65)); // Green feedback text
+                QuizFeedbackText.Text = " Correct! " + currentQuestion.Explanation;
+            }
 
-            QuizOptionsPanel.IsEnabled = false; // Disable buttons so they can't click twice
             _quizEngine.NextQuestion();
 
-            // Wait 3.5 seconds and load next question
+            // 5. Wait 3.5 seconds, then reset colours and load the next question
             var timer = new System.Windows.Threading.DispatcherTimer();
             timer.Interval = TimeSpan.FromSeconds(3.5);
-            timer.Tick += (s, args) => { timer.Stop(); LoadQuestion(); };
+            timer.Tick += (s, args) =>
+            {
+                timer.Stop();
+
+                // Reset button colours back to normal
+                OptionA.Background = new SolidColorBrush(Color.FromRgb(42, 42, 62));
+                OptionB.Background = new SolidColorBrush(Color.FromRgb(42, 42, 62));
+                OptionC.Background = new SolidColorBrush(Color.FromRgb(42, 42, 62));
+                OptionD.Background = new SolidColorBrush(Color.FromRgb(42, 42, 62));
+
+                OptionA.Foreground = Brushes.White;
+                OptionB.Foreground = Brushes.White;
+                OptionC.Foreground = Brushes.White;
+                OptionD.Foreground = Brushes.White;
+
+                LoadQuestion();
+            };
             timer.Start();
+        }
+
+        // Helper method to find the correct button by its Tag (A, B, C, D)
+        private Button GetButtonByTag(string tag)
+        {
+            if (tag == "A") return OptionA;
+            if (tag == "B") return OptionB;
+            if (tag == "C") return OptionC;
+            if (tag == "D") return OptionD;
+            return null;
         }
 
         private void ShowQuizResults()
@@ -300,6 +348,21 @@ namespace CyberChatbotGui
             QuizOptionsPanel.Visibility = Visibility.Collapsed;
             StartQuizBtn.Visibility = Visibility.Visible;
             StartQuizBtn.Content = "Restart Quiz";
+        }
+        private void CheckForOverdueTasks()
+        {
+            try
+            {
+                var tasks = _taskRepo.GetAllTasks();
+                foreach (var task in tasks)
+                {
+                    if (!task.IsCompleted && task.ReminderDate.HasValue && task.ReminderDate.Value < DateTime.Now)
+                    {
+                        AddChatMessage("Bot", $" REMINDER: The task '{task.Title}' was due on {task.ReminderDate.Value:yyyy-MM-dd} and is not completed yet!");
+                    }
+                }
+            }
+            catch { /* Ignore DB errors on startup */ }
         }
     }
 }

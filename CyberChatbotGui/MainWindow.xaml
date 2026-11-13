@@ -154,16 +154,34 @@
                         </DataGrid.ColumnHeaderStyle>
 
                         <DataGrid.Columns>
+                            <!-- Title column -->
                             <DataGridTextColumn Header="Title" Binding="{Binding Title}" Width="*" MinWidth="200"/>
-                            <DataGridTextColumn Header="Status" Binding="{Binding DisplayStatus}" Width="Auto"/>
+
+                            <!-- Status Column with Color Change -->
+                            <DataGridTemplateColumn Header="Status" Width="Auto">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock x:Name="StatusText" Text="{Binding DisplayStatus}" VerticalAlignment="Center" FontWeight="Bold"/>
+
+                                        <!-- The Magic Trigger: If it says "Overdue", turn it Red -->
+                                        <DataTemplate.Triggers>
+                                            <DataTrigger Binding="{Binding DisplayStatus}" Value=" Overdue">
+                                                <Setter TargetName="StatusText" Property="Foreground" Value="#FF4757" />
+                                            </DataTrigger>
+                                        </DataTemplate.Triggers>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <!-- Reminder column -->
                             <DataGridTextColumn Header="Reminder" Binding="{Binding DisplayDate}" Width="Auto"/>
+
+                            <!-- Actions column -->
                             <DataGridTemplateColumn Header="Actions" Width="Auto">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
-                                            <!-- Complete Button -->
                                             <Button Content="Complete" Click="CompleteTask_Click" Margin="2" Padding="5,2" Background="#00FF41" Foreground="Black" FontWeight="Bold"/>
-                                            <!-- Delete Button -->
                                             <Button Content="Delete" Click="DeleteTask_Click" Margin="2" Padding="5,2" Background="#FF4757" Foreground="White" FontWeight="Bold"/>
                                         </StackPanel>
                                     </DataTemplate>
@@ -189,10 +207,73 @@
 
                     <!-- Options -->
                     <StackPanel Grid.Row="1" x:Name="QuizOptionsPanel">
-                        <Button x:Name="OptionA" Content="Option A" Margin="0,5" Padding="10" Background="#2A2A3E" Foreground="White" FontSize="16" HorizontalAlignment="Left" Width="400" Tag="A" Click="QuizOption_Click"/>
-                        <Button x:Name="OptionB" Content="Option B" Margin="0,5" Padding="10" Background="#2A2A3E" Foreground="White" FontSize="16" HorizontalAlignment="Left" Width="400" Tag="B" Click="QuizOption_Click"/>
-                        <Button x:Name="OptionC" Content="Option C" Margin="0,5" Padding="10" Background="#2A2A3E" Foreground="White" FontSize="16" HorizontalAlignment="Left" Width="400" Tag="C" Click="QuizOption_Click"/>
-                        <Button x:Name="OptionD" Content="Option D" Margin="0,5" Padding="10" Background="#2A2A3E" Foreground="White" FontSize="16" HorizontalAlignment="Left" Width="400" Tag="D" Click="QuizOption_Click"/>
+                        <Button x:Name="OptionA" Content="Option A" Margin="0,5" Padding="10" Foreground="White" FontSize="16" HorizontalAlignment="Left" Width="400" Tag="A" Click="QuizOption_Click">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Background" Value="#2A2A3E"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}" CornerRadius="5" Padding="{TemplateBinding Padding}">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+
+                        <Button x:Name="OptionB" Content="Option B" Margin="0,5" Padding="10" Foreground="White" FontSize="16" HorizontalAlignment="Left" Width="400" Tag="B" Click="QuizOption_Click">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Background" Value="#2A2A3E"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}" CornerRadius="5" Padding="{TemplateBinding Padding}">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+
+                        <Button x:Name="OptionC" Content="Option C" Margin="0,5" Padding="10" Foreground="White" FontSize="16" HorizontalAlignment="Left" Width="400" Tag="C" Click="QuizOption_Click">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Background" Value="#2A2A3E"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}" CornerRadius="5" Padding="{TemplateBinding Padding}">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+
+                        <Button x:Name="OptionD" Content="Option D" Margin="0,5" Padding="10" Foreground="White" FontSize="16" HorizontalAlignment="Left" Width="400" Tag="D" Click="QuizOption_Click">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Background" Value="#2A2A3E"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}" CornerRadius="5" Padding="{TemplateBinding Padding}">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
                     </StackPanel>
 
                     <!-- Feedback & Score -->

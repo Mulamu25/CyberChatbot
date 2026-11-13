@@ -11,10 +11,24 @@ namespace CyberChatbotGui
         public bool IsCompleted { get; set; }
 
         // Helper properties for the UI
-        public string DisplayStatus => IsCompleted ? " Completed" : " Pending";
+        // Helper properties for the UI
+        public string DisplayStatus
+        {
+            get
+            {
+                if (IsCompleted) return " Completed";
+
+                // If it has a reminder date and that date is in the past, it's overdue!
+                if (ReminderDate.HasValue && ReminderDate.Value < DateTime.Now)
+                    return " Overdue";
+
+                return " Pending";
+            }
+        }
 
         public string DisplayDate => ReminderDate.HasValue
             ? ReminderDate.Value.ToString("yyyy-MM-dd HH:mm")
             : "No reminder";
+        
     }
 }
