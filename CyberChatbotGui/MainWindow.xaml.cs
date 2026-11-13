@@ -286,7 +286,7 @@ namespace CyberChatbotGui
                 correctButton.Foreground = Brushes.Black;
             }
 
-            // 4. If they clicked the wrong answer, highlight their wrong choice in RED
+            
             if (!isCorrect)
             {
                 clickedButton.Background = new SolidColorBrush(Color.FromRgb(255, 71, 87)); // Red
